@@ -1,18 +1,18 @@
 import { rename as fsRename } from 'fs/promises';
-import { existsSync } from 'fs';
+import { exists } from '../utils/exists.js';
 
 const rename = async () => {
     const originalPath = new URL('files/wrongFilename.txt', import.meta.url);
     const targetPath = new URL('files/properFilename.md', import.meta.url);
 
     try {
-        if (existsSync(targetPath) || !existsSync(originalPath)) {
+        if (await exists(targetPath) || !await exists(originalPath)) {
             throw Error('FS operation failed');
         }
         
         await fsRename(originalPath, targetPath);
     } catch(error) {
-        console.error(error);
+        console.error(error.message);
     }
 };
 

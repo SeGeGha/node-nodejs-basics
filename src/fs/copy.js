@@ -1,12 +1,12 @@
 import { readdir, mkdir, copyFile } from 'fs/promises';
-import { existsSync } from 'fs';
+import { exists } from '../utils/exists.js';
 
 const copy = async () => {
     const originalPath = new URL('files', import.meta.url);
     const targetPath = new URL('files_copy', import.meta.url);
 
     try {
-        if (!existsSync(originalPath) || existsSync(targetPath)) {
+        if (!await exists(originalPath) || await exists(targetPath)) {
             throw Error('FS operation failed');
         }
 
@@ -21,7 +21,7 @@ const copy = async () => {
             return copyFile(originalFilePath, targetFilePath);
         }));
     } catch(error) {
-        console.error(error);
+        console.error(error.message);
     }
 };
 

@@ -1,12 +1,12 @@
 import { createHash } from 'crypto';
 import { readFile } from 'fs/promises';
-import { existsSync } from 'fs';
+import { exists } from '../utils/exists.js';
 
 const calculateHash = async () => {
     const path = new URL('files/fileToCalculateHashFor.txt', import.meta.url);
 
     try {
-        if (!existsSync(path)) {
+        if (!await exists(path)) {
             throw Error('FS operation failed');
         }
 
@@ -15,7 +15,7 @@ const calculateHash = async () => {
         
         console.log('hash: ', hash);
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
     }
 };
 

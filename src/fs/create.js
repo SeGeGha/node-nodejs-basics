@@ -1,17 +1,17 @@
 import { appendFile } from 'fs/promises';
-import { existsSync } from 'fs';
+import { exists } from '../utils/exists.js';
 
 const create = async () => {
     const path = new URL('files/fresh.txt', import.meta.url);
 
     try {
-        if (existsSync(path)) {
+        if (await exists(path)) {
             throw Error('FS operation failed');
         }
 
         await appendFile(path, 'I am fresh and young');
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
     }
 };
 

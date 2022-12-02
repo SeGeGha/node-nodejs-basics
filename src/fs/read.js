@@ -1,11 +1,11 @@
 import { readFile } from 'fs/promises';
-import { existsSync } from 'fs';
+import { exists } from '../utils/exists.js';
 
 const read = async () => {
     const path = new URL('files/fileToRead.txt', import.meta.url);
 
     try {
-        if (!existsSync(path)) {
+        if (!await exists(path)) {
             throw Error('FS operation failed');
         }
 
@@ -13,7 +13,7 @@ const read = async () => {
         
         console.log(content);
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
     }
 };
 
