@@ -1,14 +1,14 @@
 import { readdir } from 'fs/promises';
 import { existsSync } from 'fs';
 
-const path = new URL('files', import.meta.url);
-
 const list = async () => {
-    if (!existsSync(path)) {
-        throw Error('FS operation failed');
-    }
-
+    const path = new URL('files', import.meta.url);
+    
     try {
+        if (!existsSync(path)) {
+            throw Error('FS operation failed');
+        }
+
         const files = await readdir(path);
         
         console.log('files: ', files.join(', '));
