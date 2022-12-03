@@ -1,4 +1,5 @@
-import { Transform, pipeline } from 'stream';
+import { Transform } from 'stream';
+import { pipeline } from 'stream/promises';
 
 const transform = async () => {
     const { stdin: readable, stdout: writable } = process;
@@ -11,16 +12,13 @@ const transform = async () => {
 
             callback();
         }
-    })
+    });
 
-    pipeline(
-        readable,
-        transform,
-        writable,
-        error => {
-            console.log(`Error: ${error}`);
-        }
-    )
+    try {
+        await pipeline(readable, transform, writable);
+    } catch (error) {
+        console.error(error.message);
+    }
 };
 
 await transform();
