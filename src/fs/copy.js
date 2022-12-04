@@ -1,9 +1,10 @@
 import { readdir, mkdir, copyFile } from 'fs/promises';
+import { extname } from 'path';
 import { exists } from '../utils/exists.js';
 
-const copy = async () => {
-    const originalPath = new URL('files', import.meta.url);
-    const targetPath = new URL('files_copy', import.meta.url);
+const copyFilesFromDir = async (currentDirName, targetDirName) => {
+    const originalPath = new URL(currentDirName, import.meta.url);
+    const targetPath = new URL(targetDirName, import.meta.url);
 
     try {
         if (!await exists(originalPath) || await exists(targetPath)) {
@@ -12,15 +13,30 @@ const copy = async () => {
 
         await mkdir(targetPath);
 
-        const files = await readdir(originalPath);
+        const content = await readdir(originalPath);
 
-        await Promise.all(files.map(file => {
-            const originalFilePath = new URL(`files/${file}`, import.meta.url);
-            const targetFilePath = new URL(`files_copy/${file}`, import.meta.url);
+        return Promise.all(content.map(item => {
+            const currentPathString = `${currentDirName}/${item}`;
+            const targetPathString = `${targetDirName}/${item}`;
 
-            return copyFile(originalFilePath, targetFilePath);
+            return extname(item)
+                ? copyFile(
+                    new URL(currentPathString, import.meta.url),
+                    new URL(targetPathString, import.meta.url)
+                )
+                : copyFilesFromDir(currentPathString, targetPathString);
         }));
-    } catch(error) {
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+const copy = async () => {
+    try {
+        await copyFilesFromDir('files', 'files_copy');
+
+        console.log(`Copy from /files/ to /files_copy/ completed`);
+    } catch (error) {
         console.error(error.message);
     }
 };
