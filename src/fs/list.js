@@ -1,4 +1,5 @@
 import { readdir } from 'fs/promises';
+import { extname } from 'path';
 import { exists } from '../utils/exists.js';
 
 const list = async () => {
@@ -9,9 +10,10 @@ const list = async () => {
             throw Error('FS operation failed');
         }
 
-        const files = await readdir(path);
-        
-        console.log('files: ', files.join(', '));
+        const content = await readdir(path);
+        const files = content.filter(extname);
+
+        console.log('files: ', files);
     } catch (error) {
         console.error(error.message);
     }
